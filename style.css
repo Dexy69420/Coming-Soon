@@ -1,11 +1,10 @@
-/* Palette and spacing: edit these to tune the whole composition. */
+/* Mobile first: black canvas, white typography, one shared center line. */
 :root {
-  color-scheme: light;
-  --paper: #f3f1eb;
-  --ink: #1a1b18;
-  --muted: #686960;
-  --rule: #d7d5cc;
-  --gutter: clamp(1.5rem, 6vw, 7.5rem);
+  color-scheme: dark;
+  --background: #000000;
+  --text: #ffffff;
+  --rule: #2a2a2a;
+  --gutter: clamp(1.5rem, 5vw, 6rem);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -16,13 +15,16 @@
 }
 
 html {
-  background: #faf9f6;
+  background: var(--background);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
-  background: var(--paper);
-  color: var(--ink);
+  min-inline-size: 0;
+  background: var(--background);
+  color: var(--text);
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   animation: canvas-in 900ms ease-out both;
@@ -34,102 +36,187 @@ p {
 }
 
 ::selection {
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--text);
+  color: var(--background);
 }
 
 :focus-visible {
-  outline: 2px solid var(--ink);
+  outline: 2px solid var(--text);
   outline-offset: 6px;
 }
 
-/* A full-height editorial grid; short screens may scroll naturally. */
+/* Equal outer rows keep the hero centered independently of the footer. */
 .page {
   display: grid;
-  grid-template-rows: 1fr auto;
+  grid-template-rows: minmax(3rem, 1fr) auto minmax(3rem, 1fr);
   min-block-size: 100vh;
   min-block-size: 100svh;
-  max-inline-size: 124rem;
+  min-block-size: 100dvh;
+  inline-size: 100%;
+  max-inline-size: 112rem;
   margin-inline: auto;
-  padding: clamp(2rem, 6vh, 5rem) var(--gutter)
-    max(clamp(1.5rem, 4vh, 3rem), env(safe-area-inset-bottom));
+  padding: 1.5rem var(--gutter);
+  padding-top: max(1.5rem, env(safe-area-inset-top, 0px));
+  padding-right: max(var(--gutter), env(safe-area-inset-right, 0px));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 0px));
+  padding-left: max(var(--gutter), env(safe-area-inset-left, 0px));
 }
 
 .hero {
+  grid-row: 2;
   display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  row-gap: clamp(1.5rem, 4vh, 3rem);
-  align-self: center;
-  padding-block: clamp(3rem, 9vh, 7rem) clamp(4rem, 11vh, 9rem);
+  justify-items: center;
+  gap: clamp(1.25rem, 3vh, 2.25rem);
+  min-inline-size: 0;
+  text-align: center;
 }
 
-/* Pointer motion and the entrance use separate transform layers. */
+/* Entrance and pointer motion use separate layers. */
 .wordmark-motion {
-  grid-column: 1 / -1;
-  inline-size: fit-content;
+  min-inline-size: 0;
   max-inline-size: 100%;
-  transition: transform 1100ms var(--ease-out);
 }
 
 .wordmark {
-  font-size: clamp(5rem, 23.8vw, 31rem);
+  font-size: clamp(2.5rem, 26vw, 12rem);
   font-weight: 900;
-  line-height: 0.88;
-  letter-spacing: -0.065em;
+  line-height: 0.95;
+  letter-spacing: -0.055em;
 }
 
 .wordmark-mask {
   display: block;
   overflow: hidden;
-  padding-block: 0.1em;
+  padding: 0.08em 0.025em;
 }
 
 .wordmark-ink {
   display: block;
-  padding-inline-end: 0.07em;
+  /* Compensate for the last letter's tracking to center YOAH. accurately. */
+  padding-inline-end: 0.055em;
   white-space: nowrap;
   animation: wordmark-in 1600ms var(--ease-out) 140ms both;
 }
 
 .message {
-  grid-column: 8 / -1;
+  max-inline-size: 24ch;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.25rem, 1rem + 0.7vw, 1.875rem);
+  font-size: clamp(1rem, 3.8vw, 1.25rem);
   font-style: italic;
   font-weight: 400;
-  line-height: 1.4;
-  letter-spacing: -0.025em;
+  line-height: 1.5;
+  text-wrap: balance;
   animation: copy-in 1000ms var(--ease-out) 950ms both;
 }
 
 .footer {
+  grid-row: 3;
+  align-self: end;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  min-inline-size: 0;
   border-block-start: 1px solid var(--rule);
-  padding-block-start: clamp(1.25rem, 3vh, 2rem);
+  padding-block-start: 1rem;
   animation: copy-in 1000ms var(--ease-out) 1550ms both;
 }
 
 .status {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--muted);
+  position: relative;
+  padding-inline: 0.5em;
+  color: var(--text);
   font-size: 0.75rem;
   font-weight: 500;
   line-height: 1.5;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
+  text-indent: 0.2em;
+  text-align: center;
   text-transform: uppercase;
 }
 
-/* A quiet ambient cue, with no movement of the readable text. */
+/* The cue sits above the label so it cannot offset the text's alignment. */
 .status::before {
   content: "";
-  flex: 0 0 1.75rem;
+  position: absolute;
+  inset-block-start: calc(-1rem - 1px);
+  inset-inline-start: calc(50% - 0.875rem);
+  inline-size: 1.75rem;
   block-size: 1px;
   background: currentColor;
-  transform-origin: right center;
   animation: breathe 7s ease-in-out 2550ms infinite both;
+}
+
+/* Desktop keeps the editorial composition; phones and tablets stay centered. */
+@media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+  .page {
+    padding-top: max(2.5rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(2.5rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    justify-items: start;
+    gap: clamp(1.5rem, 4vh, 3rem) 0;
+    text-align: left;
+  }
+
+  .wordmark-motion {
+    grid-column: 1 / -1;
+  }
+
+  .wordmark {
+    font-size: clamp(3rem, 23vw, 28rem);
+  }
+
+  .message {
+    grid-column: 8 / -1;
+    font-size: clamp(1.25rem, 1rem + 0.7vw, 1.875rem);
+  }
+
+  .footer {
+    justify-content: flex-end;
+  }
+}
+
+/* Short landscape screens need a height-based type scale. */
+@media (max-height: 32rem) and (orientation: landscape) {
+  .page {
+    grid-template-rows: minmax(2.5rem, 1fr) auto minmax(2.5rem, 1fr);
+    padding-top: max(1rem, env(safe-area-inset-top, 0px));
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  .wordmark {
+    font-size: clamp(2.5rem, 25vh, 8rem);
+    font-size: clamp(2.5rem, 25svh, 8rem);
+  }
+
+  .message {
+    grid-column: 1;
+    max-inline-size: 100%;
+    font-size: 1rem;
+  }
+
+  .footer {
+    justify-content: center;
+    padding-block-start: 0.75rem;
+  }
+
+  .status::before {
+    inset-block-start: calc(-0.75rem - 1px);
+  }
+}
+
+@media (min-width: 64rem) and (hover: hover) and (pointer: fine) {
+  .wordmark-motion {
+    transition: transform 1100ms var(--ease-out);
+  }
 }
 
 @keyframes canvas-in {
@@ -160,33 +247,8 @@ p {
 }
 
 @keyframes breathe {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scaleX(0.65);
-  }
-  50% {
-    opacity: 0.8;
-    transform: scaleX(1);
-  }
-}
-
-@media (max-width: 600px) {
-  .hero {
-    row-gap: 2.25rem;
-  }
-
-  .wordmark {
-    font-size: clamp(3rem, 27vw, 10.125rem);
-  }
-
-  .message {
-    grid-column: 5 / -1;
-  }
-
-  .status {
-    gap: 0.75rem;
-    letter-spacing: 0.16em;
-  }
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 0.9; }
 }
 
 @media (prefers-reduced-motion: reduce) {
