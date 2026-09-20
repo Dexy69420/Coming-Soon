@@ -1,23 +1,65 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="YOAH. An independent apparel brand. Coming soon.">
-  <meta name="theme-color" content="#000000">
-  <meta property="og:title" content="YOAH — Coming Soon">
-  <meta property="og:description" content="YOAH. An independent apparel brand. Coming soon.">
-  <meta property="og:type" content="website">
-  <title>YOAH — Coming Soon</title>
-  <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-  <main>
-    <h1>[YOAH]</h1>
-    <p class="status">COMING SOON</p>
-  </main>
-  <footer>
-    <small>© 2026 [YOAH]</small>
-  </footer>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="YOAH. Something new is taking shape. Coming soon.">
+    <meta name="theme-color" content="#f3f1eb">
+    <meta name="color-scheme" content="light">
+    <title>YOAH — Coming Soon</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23f3f1eb'/%3E%3Cpath d='M14 14h10l8 15 8-15h10L37 37v13H27V37Z' fill='%231a1b18'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero" aria-labelledby="brand">
+        <div class="wordmark-motion">
+          <h1 class="wordmark" id="brand">
+            <span class="wordmark-mask">
+              <span class="wordmark-ink">YOAH</span>
+            </span>
+          </h1>
+        </div>
+        <p class="message">Something new<br> is taking shape.</p>
+      </section>
+
+      <footer class="footer">
+        <p class="status">Coming Soon</p>
+      </footer>
+    </main>
+
+    <script>
+      (() => {
+        const wordmark = document.querySelector(".wordmark-motion");
+        const motion = matchMedia(
+          "(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)"
+        );
+        let frame = 0;
+        let x = 0;
+        let y = 0;
+
+        function render() {
+          wordmark.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+          frame = 0;
+        }
+
+        function reset() {
+          cancelAnimationFrame(frame);
+          x = y = 0;
+          render();
+        }
+
+        window.addEventListener("pointermove", (event) => {
+          if (!motion.matches || event.pointerType !== "mouse") return;
+          x = (event.clientX / window.innerWidth - 0.5) * 10;
+          y = (event.clientY / window.innerHeight - 0.5) * 6;
+          if (!frame) frame = requestAnimationFrame(render);
+        }, { passive: true });
+
+        document.documentElement.addEventListener("pointerleave", reset);
+        window.addEventListener("blur", reset);
+        motion.addEventListener("change", reset);
+      })();
+    </script>
+  </body>
 </html>
